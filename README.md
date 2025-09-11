@@ -20,35 +20,41 @@ Persyaratan:
 
 Catatan penting untuk deployment: pada layanan serverless (seperti Vercel), penyimpanan file lokal bersifat sementara/ephemeral — file CSV yang ditulis ke disk tidak akan bertahan. Untuk deployment production, sarankan menggunakan MySQL (atau penyimpanan eksternal seperti S3) untuk menyimpan rekor.
 
-### Deploy ke Vercel (singkat)
+### Deploy ke Railway (singkat)
 
-1. Buat akun di https://vercel.com dan hubungkan repository GitHub/GitLab/Bitbucket.
-2. Saat mengimpor project, atur Environment Variables di dashboard Vercel agar sesuai dengan `.env` Anda:
-   - DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, dan variabel lain yang diperlukan.
-3. Karena aplikasi menggunakan Express (server Node.js), Anda dapat deploy sebagai fungsi serverless dengan konfigurasi sederhana. Tambahkan file `vercel.json` di root proyek (contoh di bawah). Jika entry point Anda bernama `index.js` atau `server.js`, sesuaikan nama file di konfigurasi.
-4. Perhatikan bahwa penyimpanan file lokal (mis. `data/records.csv`) tidak persisten di Vercel. Untuk menyimpan CSV di deployment production, gunakan:
-   - Penyimpanan eksternal seperti AWS S3 / DigitalOcean Spaces, atau
-   - Simpan rekor sepenuhnya di MySQL dan buat export CSV saat diminta (mis. generate CSV on-demand dan kirim sebagai response/download).
-5. Setelah konfigurasi selesai, deploy melalui tombol "Deploy" di Vercel atau push ke branch yang dipantau.
+Railway is a simple platform to host both the Node.js app and a managed MySQL database. Use these steps to deploy the project and its database on Railway:
 
-Contoh `vercel.json` (sesuaikan entry file):
-```json
-{
-  "version": 2,
-  "builds": [
-    { "src": "index.js", "use": "@vercel/node" },
-    { "src": "public/**", "use": "@vercel/static" }
-  ],
-  "routes": [
-    { "src": "/(.*)", "dest": "index.js" }
-  ]
-}
+1. Create an account at https://railway.app and connect your GitHub repository.
+2. In Railway create a new project and link the repository. Railway can build the app automatically from your repository.
+3. Provision a managed MySQL database from Railway's plugin/add-on marketplace (within the same project). After provisioning, Railway exposes connection details (host, port, user, password, database).
+4. Set the required environment variables in Railway's project settings (or via the Railway CLI):
+  - DB_HOST, DB_PORT, DB_USER, DB_PASS, DB_NAME
+  - PORT (optional; Railway will provide one at runtime; app already falls back to process.env.PORT || 3000)
+  - CSV_PATH (optional) — note: Railway's filesystem is ephemeral; prefer storing records in MySQL or an external object storage if persistence is required.
+5. Ensure `package.json` has a `start` script (this project uses `server.js` so `"start": "node server.js"` is correct).
+6. Deploy: trigger a deploy from Railway (it will run the build and start the app). Use the Railway dashboard to view logs and the assigned public URL.
+
+Notes and best practices on Railway
+- Railway offers an ephemeral container filesystem — writing to `data/records.csv` will not persist across redeploys or container restarts. Rely on the managed MySQL database for persistent records and implement on-demand CSV export if you need downloadable CSVs in production.
+- When you provision MySQL through Railway, copy the provided credentials into environment variables rather than hardcoding them.
+- To run locally with Railway-provided variables, use the Railway CLI (`railway run` or `railway link`) or copy environment values into a local `.env` file.
+
+Quick environment-variable mapping example (Railway-provided values):
+
+```
+DB_HOST=your-db-host.railway.app
+DB_PORT=3306
+DB_USER=railway_user
+DB_PASS=railway_password
+DB_NAME=railway_db
+PORT=3000
+CSV_PATH=data/records.csv  # optional; not persistent on Railway
 ```
 
-Tips tambahan:
-- Pastikan script `start` di `package.json` menjalankan server (contoh: `"start": "node index.js"`).
-- Atur variabel PORT dari environment (Vercel menyediakan port runtime) atau biarkan Express fallback ke process.env.PORT || 3000.
-- Untuk debugging build di Vercel, lihat logs di dashboard deployment.
+Troubleshooting
+- Check Railway logs for startup errors (DB connection failures, missing env vars).
+- If `ensureTable()` fails at startup, verify the DB credentials and that the Railway MySQL plugin is healthy.
+
 
 Tabel akan dibuat otomatis saat server berjalan. CSV akan disimpan di `data/records.csv`.
 
@@ -60,4 +66,4 @@ Shapes yang didukung:
 - limas (volume) - diasumsikan alas persegi
 - tabung (volume)
 
-Catatan: field parameter akan disimpan sebagai JSON. Jika Anda ingin menambah validasi atau fitur export lebih lanjut, saya bisa bantu.
+Catatan: field parameter akan disimpan sebagai JSON.

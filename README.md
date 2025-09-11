@@ -18,6 +18,8 @@ Persyaratan:
 3. Jalankan `npm install` lalu `npm start`.
 4. Tabel akan dibuat otomatis saat server berjalan. CSV akan disimpan di `data/records.csv`.
 
+Webapps: https://situngba-sdadibuana.up.railway.app/
+
 Catatan penting untuk deployment: pada layanan serverless (seperti Vercel), penyimpanan file lokal bersifat sementara/ephemeral — file CSV yang ditulis ke disk tidak akan bertahan. Untuk deployment production, sarankan menggunakan MySQL (atau penyimpanan eksternal seperti S3) untuk menyimpan rekor.
 
 ### Deploy ke Railway (singkat)

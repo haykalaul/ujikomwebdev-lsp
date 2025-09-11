@@ -1,10 +1,15 @@
-# Aplikasi Hitung Luas & Volume
+# Aplikasi Hitung Luas & Volume Siswa SD
 
-Aplikasi sederhana Node.js + Express untuk siswa menghitung luas dan volume bangun datar/ruang, menyimpan hasil ke CSV dan MySQL, serta menampilkan dashboard statistik.
+Merupakan tugas praktik dari Uji Kompetensi Junior Web Program di LSP - Aplikasi sederhana Node.js + Express untuk siswa menghitung luas dan volume bangun datar/ruang, menyimpan hasil ke CSV dan MySQL, serta menampilkan dashboard statistik.
 
 Persyaratan:
 - Node.js 14+
+- Express JS
 - MySQL
+
+## 📸 Screenshot
+
+![Screenshot](public/hero2.png)
 
 Setup singkat:
 1. Copy file `.env.example` ke `.env` dan sesuaikan konfigurasi database.

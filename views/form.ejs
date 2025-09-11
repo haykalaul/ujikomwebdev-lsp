@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Form Hitung Luas / Volume</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/style.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="/">
+        <img src="/logosd.jpg" alt="SD Logo" class="me-2 logo-img">
+        <span>SITUNGBA SD ADIBUANA</span>
+      </a>
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="card shadow-sm mb-4">
+          <div class="card-body">
+            <h3 class="card-title mb-3">Form Siswa - Hitung Luas / Volume</h3>
+            <form method="post" action="/calculate">
+              <h5>Biodata</h5>
+              <div class="row g-2">
+                <div class="col-md-6">
+                  <label class="form-label">Nama</label>
+                  <input class="form-control" type="text" name="name" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Sekolah</label>
+                  <input class="form-control" type="text" name="school" required>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Usia</label>
+                  <input class="form-control" type="number" name="age" min="1" required>
+                </div>
+                <div class="col-md-8">
+                  <label class="form-label">No. Telepon</label>
+                  <input class="form-control" type="text" name="phone" required>
+                </div>
+                <div class="col-12">
+                  <label class="form-label">Alamat</label>
+                  <input class="form-control" type="text" name="address" required>
+                </div>
+              </div>
+
+              <hr class="my-3">
+              <h5>Pilih Bangun</h5>
+              <div class="mb-3">
+                <label class="form-label">Bangun</label>
+                <select name="shape" id="shape" class="form-select" required>
+                  <option value="persegi">Persegi (luas)</option>
+                  <option value="segitiga">Segitiga (luas)</option>
+                  <option value="lingkaran">Lingkaran (luas)</option>
+                  <option value="kubus">Kubus (volume)</option>
+                  <option value="limas">Limas (volume) - asumsikan alas persegi</option>
+                  <option value="tabung">Tabung (volume)</option>
+                </select>
+              </div>
+
+              <div class="vars mb-3" id="vars"></div>
+
+              <div class="d-flex justify-content-between">
+                <a class="btn btn-secondary" href="/dashboard">Lihat Dashboard</a>
+                <button class="btn btn-primary" type="submit">Hitung & Simpan</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const varsDiv = document.getElementById('vars');
+    const shapeEl = document.getElementById('shape');
+
+    function renderFields() {
+      const s = shapeEl.value;
+      let html = '';
+      if (s === 'persegi') {
+        html = '<div class="row g-2"><div class="col-md-6"><label class="form-label">Sisi (s)</label><input name="s" class="form-control" type="number" step="any" required></div></div>';
+      } else if (s === 'segitiga') {
+        html = '<div class="row g-2"><div class="col-md-6"><label class="form-label">Alas (a)</label><input name="a" class="form-control" type="number" step="any" required></div><div class="col-md-6"><label class="form-label">Tinggi (t)</label><input name="t" class="form-control" type="number" step="any" required></div></div>';
+      } else if (s === 'lingkaran') {
+        html = '<div class="row g-2"><div class="col-md-6"><label class="form-label">Radius (r)</label><input name="r" class="form-control" type="number" step="any" required></div></div>';
+      } else if (s === 'kubus') {
+        html = '<div class="row g-2"><div class="col-md-6"><label class="form-label">Sisi (s)</label><input name="s" class="form-control" type="number" step="any" required></div></div>';
+      } else if (s === 'limas') {
+        html = '<div class="row g-2"><div class="col-md-6"><label class="form-label">Sisi alas (s)</label><input name="s" class="form-control" type="number" step="any" required></div><div class="col-md-6"><label class="form-label">Tinggi limas (t)</label><input name="t" class="form-control" type="number" step="any" required></div></div>';
+      } else if (s === 'tabung') {
+        html = '<div class="row g-2"><div class="col-md-6"><label class="form-label">Radius (r)</label><input name="r" class="form-control" type="number" step="any" required></div><div class="col-md-6"><label class="form-label">Tinggi (h)</label><input name="h" class="form-control" type="number" step="any" required></div></div>';
+      }
+      varsDiv.innerHTML = html;
+    }
+
+    shapeEl.addEventListener('change', renderFields);
+    renderFields();
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

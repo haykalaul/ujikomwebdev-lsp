@@ -1,0 +1,24 @@
+body {
+	font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+.card-title { color: #0d6efd; }
+pre { background:#f8f9fa; padding:8px; border-radius:4px }
+
+/* responsive tweaks */
+@media (max-width: 576px) {
+	.card { margin-bottom: 1rem; }
+}
+
+.logo-img { width:32px; height:32px; display:inline-block }
+
+/* Landing hero animation */
+.hero { position: relative; padding: 2rem 0 }
+.hero::before { content: ''; position: absolute; right: -60px; top: -20px; width:220px; height:220px; background: radial-gradient(circle at 30% 30%, rgba(13,110,253,0.12), transparent 40%); border-radius:50%; transform: rotate(10deg); animation: float 6s ease-in-out infinite; }
+.hero::after { content: ''; position: absolute; left: -40px; bottom: -30px; width:160px; height:160px; background: radial-gradient(circle at 70% 70%, rgba(32,201,151,0.10), transparent 40%); border-radius:50%; animation: float 8s ease-in-out infinite reverse; }
+@keyframes float { 0%{transform:translateY(0) rotate(0)}50%{transform:translateY(-8px) rotate(3deg)}100%{transform:translateY(0) rotate(0)} }
+
+/* testimonials */
+.carousel .card { background: linear-gradient(180deg,#fff,#f8f9fa) }
+
+/* pricing */
+.card.border-primary { border-width:2px }

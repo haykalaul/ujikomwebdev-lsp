@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SITUNGBA SD Adibuana — Sistem Hitung Luas & Volume</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/style.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="/">
+        <img src="/logosd.jpg" alt="SD Logo" class="me-2" style="width:36px;height:36px">
+        <span>SITUNGBA SD Adibuana</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navMain">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="/form">Form Hitung</a></li>
+          <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <header class="py-5">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-6">
+          <div class="hero">
+            <h1 class="display-5 fw-bold">SITUNGBA — Sistem Interaktif Hitung Bangun Datar & Ruang</h1>
+            <p class="lead text-muted">Aplikasi web untuk siswa SD menghitung luas bangun datar dan volume bangun ruang secara interaktif, menyimpan hasil ke CSV dan database MySQL, serta menampilkan statistik real-time untuk guru dan pemantauan.</p>
+
+            <div class="d-flex gap-2 mt-4">
+              <a href="/form" class="btn btn-primary btn-lg">Mulai Hitung</a>
+              <a href="/dashboard" class="btn btn-outline-secondary btn-lg">Lihat Dashboard</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6 d-none d-lg-block">
+          <div class="card shadow border-0">
+            <div class="card-body p-4">
+              <img src="/hero1.png" alt="logo" style="width:180px; display:block; margin:0 auto">
+              <p class="text-center mt-3 text-muted">Visualisasi, rekap, dan unduh data perhitungan siswa.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="py-5 bg-white border-top">
+    <div class="container">
+      <h2 class="h4 mb-3">Fitur Utama</h2>
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5>Form Interaktif</h5>
+              <p class="text-muted">Form sederhana untuk siswa mengisi biodata dan variabel bangun, dengan validasi dan penyimpanan otomatis.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5>Rekap & Export</h5>
+              <p class="text-muted">Hasil disimpan ke CSV dan MySQL, dapat diunduh langsung dari dashboard.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5>Dashboard Statistik</h5>
+              <p class="text-muted">Grafik persentase, statistik per bangun, dan daftar percobaan terbaru.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-5 bg-light">
+    <div class="container">
+      <h2 class="h4 mb-4 text-center">Apa kata mereka</h2>
+      <div id="testimonials" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <div class="card p-4 mx-auto" style="max-width:720px">
+              <div class="card-body">
+                <p class="mb-2">"Sistem ini mempermudah guru memantau hasil latihan siswa dan melihat grafik perkembangan."</p>
+                <p class="text-muted mb-0"><strong>Ibu Siti</strong> — Guru Matematika</p>
+              </div>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <div class="card p-4 mx-auto" style="max-width:720px">
+              <div class="card-body">
+                <p class="mb-2">"Anak-anak suka karena interaktif dan visualnya menarik."</p>
+                <p class="text-muted mb-0"><strong>Bapak Agus</strong> — Orang Tua</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#testimonials" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#testimonials" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-5 bg-white">
+    <div class="container">
+      <h2 class="h4 mb-4 text-center">Pricing & Plans</h2>
+      <div class="row g-3 justify-content-center">
+        <div class="col-md-4">
+          <div class="card h-100 text-center">
+            <div class="card-body">
+              <h5 class="card-title">Free</h5>
+              <p class="card-text">Basic fitur untuk latihan siswa lokal, CSV export.</p>
+              <p class="display-6">Rp0</p>
+              <a href="/form" class="btn btn-outline-primary">Start Free</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card h-100 text-center border-primary">
+            <div class="card-body">
+              <h5 class="card-title">Pro</h5>
+              <p class="card-text">Includes dashboard analytics & priority support.</p>
+              <p class="display-6">Rp50.000</p>
+              <a href="/form" class="btn btn-primary">Start Pro</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="py-4 text-muted text-center">
+    <div class="container">
+      <small>&copy; <%= new Date().getFullYear() %> SITUNGBA SD Adibuana — Built with Aul Tech Studio</small>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

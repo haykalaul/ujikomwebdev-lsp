@@ -1,0 +1,103 @@
+{
+  "info": {
+    "name": "SITUNGBA API - CSV & Health",
+    "description": "Postman collection untuk endpoint /api/csv-info dan /health pada aplikasi SITUNGBA.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get CSV Info",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/csv-info",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "csv-info"
+          ]
+        },
+        "description": "Mengambil informasi file CSV rekap: apakah ada (exists), ukuran (bytes), waktu modifikasi (mtime), dan jumlah baris (rows)."
+      },
+      "response": [
+        {
+          "name": "Example - exists",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": "http://localhost:3000/api/csv-info"
+          },
+          "status": "OK",
+          "code": 200,
+          "_body": "{\n  \"exists\": true,\n  \"size\": 2048,\n  \"mtime\": \"2025-09-11T08:00:00.000Z\",\n  \"rows\": 12\n}",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        {
+          "name": "Example - not found",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": "http://localhost:3000/api/csv-info"
+          },
+          "status": "OK",
+          "code": 200,
+          "_body": "{\n  \"exists\": false\n}",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/health",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "health"
+          ]
+        },
+        "description": "Endpoint kesehatan aplikasi. Mengembalikan { ok: true } jika server hidup."
+      },
+      "response": [
+        {
+          "name": "Example",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": "http://localhost:3000/health"
+          },
+          "status": "OK",
+          "code": 200,
+          "_body": "{\n  \"ok\": true\n}",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -8,7 +8,7 @@ Be respectful and constructive. Harassment or discriminatory behavior will not b
 ## Getting started (local)
 Prerequisites: Node.js (LTS), npm, MySQL (or compatible), Git.
 1. Fork the repository and clone:
-   git clone https://github.com/<your-user>/situngba.git
+   git clone https://github.com/haykalaul/ujikomwebdev-lsp
 2. Copy env and install:
    cp .env.example .env
    npm install

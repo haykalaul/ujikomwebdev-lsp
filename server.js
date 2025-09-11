@@ -405,17 +405,9 @@ app.use((req, res) => {
 // Mulai server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-  console.log('=== Configuration Check ===');
-  console.log('- DATABASE_ENABLED:', DATABASE_ENABLED);
-  console.log('- DB_HOST:', process.env.DB_HOST || 'NOT SET');
-  console.log('- DB_PORT:', process.env.DB_PORT || 'NOT SET');
-  console.log('- DB_NAME:', process.env.DB_NAME || 'NOT SET');
-  console.log('- DB_USER:', process.env.DB_USER ? 'SET' : 'NOT SET');
-  console.log('- DB_PASS:', process.env.DB_PASS ? 'SET' : 'NOT SET');
+  console.log('Environment variables check:');
+  console.log('- DB_HOST:', process.env.DB_HOST || 'localhost');
+  console.log('- DB_PORT:', process.env.DB_PORT || '3306');
+  console.log('- DB_NAME:', process.env.DB_NAME || 'luas_volume_db');
   console.log('- CSV_PATH:', CSV_PATH);
-  console.log('=========================');
-  
-  if (!DATABASE_ENABLED) {
-    console.log('⚠️  Running in CSV-only mode. Add MySQL service and set environment variables to enable database features.');
-  }
 });

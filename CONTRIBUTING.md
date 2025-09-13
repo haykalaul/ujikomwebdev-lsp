@@ -1,59 +1,59 @@
-# Contributing to SITUNGBA
+# Berkontribusi untuk SITUNGBA
 
-Thank you for your interest in contributing. This file describes how to report issues, propose changes, and submit code so maintainers can review and merge efficiently.
+Terima kasih atas ketertarikan Anda untuk berkontribusi. File ini menjelaskan bagaimana cara melaporkan masalah, mengusulkan perubahan, dan mengirimkan kode agar pengelola dapat meninjau dan menggabungkannya secara efisien.
 
-## Code of Conduct
-Be respectful and constructive. Harassment or discriminatory behavior will not be tolerated. Follow common open-source etiquette in discussions and reviews.
+## Kode Etik
+Bersikaplah hormat dan konstruktif. Pelecehan atau perilaku diskriminatif tidak akan ditoleransi. Ikuti etika sumber terbuka yang umum dalam diskusi dan ulasan.
 
-## Getting started (local)
-Prerequisites: Node.js (LTS), npm, MySQL (or compatible), Git.
-1. Fork the repository and clone:
-   git clone https://github.com/haykalaul/ujikomwebdev-lsp
-2. Copy env and install:
+## Memulai (lokal)
+Prasyarat: Node.js (LTS), npm, MySQL (atau yang kompatibel), Git.
+1. Garpu repositori dan klon:
+ git clone https://github.com/haykalaul/ujikomwebdev-lsp
+2. Salin env dan instal:
    cp .env.example .env
-   npm install
-3. Prepare database (create DB, update .env), then run migrations/seeds if available.
-4. Start dev server:
-   npm run dev
+ npm install
+3. Siapkan basis data (buat DB, perbarui .env), lalu jalankan migrasi/perbanyakan jika tersedia.
+4. Mulai server dev:
+ npm run dev
 
-Adjust steps to your environment (Laragon, Docker, etc.).
+Sesuaikan langkah-langkah dengan lingkungan Anda (Laragon, Docker, dll.).
 
-## Workflow & Branching
-- Create a branch per change: feat/<short-description>, fix/<short-description>, chore/<short>.
-- Reference an issue in the branch name or PR (e.g., feat/#42-add-form-validation).
-- Keep PRs small and focused.
+## Alur Kerja & Percabangan
+- Buat cabang per perubahan: feat/<deskripsi singkat>, fix/<deskripsi singkat>, chore/<deskripsi singkat>.
+- Rujuk sebuah isu dalam nama cabang atau PR (misalnya, feat/#42-tambahkan-form-validasi).
+- Jaga agar PR tetap kecil dan fokus.
 
-## Issues & Pull Requests
-- Open an issue to discuss large changes before implementation.
-- PR checklist:
-  - Link related issue (if any).
-  - Provide a short description and rationale.
-  - Include steps to reproduce/test.
-  - Add screenshots if UI changes.
-  - Ensure code lints and builds.
+## Masalah & Permintaan Tarik
+- Buka sebuah isu untuk mendiskusikan perubahan besar sebelum diimplementasikan.
+- Daftar periksa PR:
+  - Tautkan isu terkait (jika ada).
+  - Berikan deskripsi dan alasan singkat.
+  - Sertakan langkah-langkah untuk mereproduksi/menguji.
+  - Tambahkan tangkapan layar jika UI berubah.
+  - Pastikan serat kode dan build.
 
-## Commit messages
-Use Conventional Commits style:
-- feat: add new feature
-- fix: bug fix
-- docs: documentation only changes
-Example:
-  feat(form): validate required fields
+## Pesan komit
+Gunakan gaya Komit Konvensional:
+- feat: tambahkan fitur baru
+- fix: perbaikan bug
+- docs: perubahan hanya untuk dokumentasi
+Contoh:
+ feat(form): memvalidasi bidang yang wajib diisi
 
-## Style & Quality
-- Follow existing code patterns (Express + EJS, JS/Node style).
-- Run linters/formatters (ESLint/Prettier) if configured.
-- Add tests for new logic where applicable.
+## Gaya & Kualitas
+- Ikuti pola kode yang sudah ada (Express + EJS, gaya JS/Node).
+- Jalankan linters/pemformat (ESLint/Prettier) jika dikonfigurasi.
+- Tambahkan tes untuk logika baru jika diperlukan.
 
-## Testing
-Run test scripts if present:
-  npm test
-If no tests exist, add unit tests for core logic when feasible.
+## Pengujian
+Jalankan skrip pengujian jika ada:
+ npm test
+Jika tidak ada pengujian, tambahkan pengujian unit untuk logika inti jika memungkinkan.
 
-## Security
-Do not open public issues for security vulnerabilities. Contact maintainers privately (use repository maintainer contact or the project's security policy).
+## Keamanan
+Jangan membuka isu publik untuk kerentanan keamanan. Hubungi pengelola secara pribadi (gunakan kontak pengelola repositori atau kebijakan keamanan proyek).
 
-## License & Contribution Agreement
-By submitting a PR you agree that your contribution will be licensed under the repository license. Ensure you have the right to submit the code you contribute.
+## Perjanjian Lisensi & Kontribusi
+Dengan mengirimkan PR, Anda setuju bahwa kontribusi Anda akan dilisensikan di bawah lisensi repositori. Pastikan Anda memiliki hak untuk mengirimkan kode yang Anda kontribusikan.
 
-Thank you for helping improve SITUNGBA. Small, well-documented contributions are highly valued.
+Terima kasih telah membantu mengembangkan SITUNGBA. Kontribusi kecil yang terdokumentasi dengan baik akan sangat dihargai.

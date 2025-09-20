@@ -5,6 +5,7 @@ const fs = require('fs');
 const mysql = require('mysql2/promise');
 const bodyParser = require('body-parser');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
+const { localDb, testConnections, syncToSupabase, getSyncStatus } = require('./db');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -391,6 +392,118 @@ app.get('/api/csv-info', (req, res) => {
 // Health check endpoint
 app.get('/health', (req, res) => res.json({ ok: true }));
 
+// === SUPABASE SYNC API ENDPOINTS ===
+
+// Manual sync to Supabase
+app.post('/api/sync-to-supabase', async (req, res) => {
+  try {
+    console.log('🔄 Manual sync to Supabase initiated');
+    const result = await syncToSupabase();
+
+    if (result.success) {
+      res.json({
+        success: true,
+        message: 'Sync completed successfully',
+        syncedRecords: result.syncedRecords,
+        timestamp: new Date().toISOString()
+      });
+    } else {
+      res.status(500).json({
+        success: false,
+        message: 'Sync failed',
+        error: result.error,
+        timestamp: new Date().toISOString()
+      });
+    }
+  } catch (error) {
+    console.error('Manual sync error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Sync failed due to server error',
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+// Get sync status
+app.get('/api/sync-status', async (req, res) => {
+  try {
+    const status = await getSyncStatus();
+    res.json({
+      success: true,
+      data: status,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Sync status error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get sync status',
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+// Get data comparison between local and Supabase
+app.get('/api/data-comparison', async (req, res) => {
+  try {
+    const status = await getSyncStatus();
+
+    if (status.error) {
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to get data comparison',
+        error: status.error,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    const comparison = {
+      localDatabase: {
+        totalRecords: status.local.total,
+        lastRecord: status.local.last_record
+      },
+      supabaseDatabase: {
+        totalRecords: status.supabase.total,
+        lastRecord: status.supabase.last_record
+      },
+      syncInfo: {
+        lastSync: status.lastSync,
+        isConfigured: status.isConfigured,
+        recordsDifference: status.local.total - status.supabase.total
+      },
+      recommendations: []
+    };
+
+    // Generate recommendations
+    if (!status.isConfigured) {
+      comparison.recommendations.push('Configure Supabase database connection in environment variables');
+    } else if (status.local.total > status.supabase.total) {
+      comparison.recommendations.push('Local database has more records - consider running sync');
+    } else if (status.supabase.total > status.local.total) {
+      comparison.recommendations.push('Supabase has more records than local - data may be out of sync');
+    } else {
+      comparison.recommendations.push('Databases appear to be in sync');
+    }
+
+    res.json({
+      success: true,
+      data: comparison,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Data comparison error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get data comparison',
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
 // Global error handler
 app.use((err, req, res, next) => {
   console.error('Global error handler:', err.stack);
@@ -402,12 +515,75 @@ app.use((req, res) => {
   res.status(404).send('Page not found');
 });
 
+// Auto-sync function
+async function startAutoSync() {
+  const syncInterval = parseInt(process.env.AUTO_SYNC_INTERVAL_MINUTES) || 5; // Default 5 minutes
+
+  if (process.env.SUPABASE_DB_HOST) {
+    console.log(`🔄 Auto-sync enabled: running every ${syncInterval} minutes`);
+
+    // Initial sync check
+    try {
+      const status = await getSyncStatus();
+      if (status.local && status.local.total > 0) {
+        console.log('📊 Initial sync check: Local database has data, checking if sync needed...');
+        const result = await syncToSupabase();
+        if (result.success && result.syncedRecords > 0) {
+          console.log(`✅ Initial sync completed: ${result.syncedRecords} records synced`);
+        }
+      }
+    } catch (error) {
+      console.error('❌ Initial sync failed:', error.message);
+    }
+
+    // Set up periodic sync
+    setInterval(async () => {
+      try {
+        console.log('🔄 Running scheduled sync to Supabase...');
+        const result = await syncToSupabase();
+
+        if (result.success) {
+          if (result.syncedRecords > 0) {
+            console.log(`✅ Scheduled sync completed: ${result.syncedRecords} records synced`);
+          } else {
+            console.log('✅ Scheduled sync completed: No new records to sync');
+          }
+        } else {
+          console.error('❌ Scheduled sync failed:', result.error);
+        }
+      } catch (error) {
+        console.error('❌ Scheduled sync error:', error.message);
+      }
+    }, syncInterval * 60 * 1000); // Convert minutes to milliseconds
+  } else {
+    console.log('⚠️  Auto-sync disabled: SUPABASE_DB_HOST not configured');
+  }
+}
+
 // Mulai server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log('Environment variables check:');
+app.listen(PORT, async () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log('📊 Environment variables check:');
   console.log('- DB_HOST:', process.env.DB_HOST || 'localhost');
   console.log('- DB_PORT:', process.env.DB_PORT || '3306');
   console.log('- DB_NAME:', process.env.DB_NAME || 'luas_volume_db');
   console.log('- CSV_PATH:', CSV_PATH);
+
+  if (process.env.SUPABASE_DB_HOST) {
+    console.log('- SUPABASE_DB_HOST:', process.env.SUPABASE_DB_HOST);
+    console.log('- SUPABASE_DB_NAME:', process.env.SUPABASE_DB_NAME);
+    console.log('- AUTO_SYNC_INTERVAL_MINUTES:', process.env.AUTO_SYNC_INTERVAL_MINUTES || '5 (default)');
+  } else {
+    console.log('- SUPABASE_DB_HOST: Not configured');
+  }
+
+  // Test database connections
+  try {
+    await testConnections();
+  } catch (error) {
+    console.error('❌ Database connection test failed:', error.message);
+  }
+
+  // Start auto-sync if configured
+  await startAutoSync();
 });

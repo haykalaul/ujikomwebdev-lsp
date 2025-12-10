@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
-const mysql = require('mysql2/promise');
+const { createClient } = require('@supabase/supabase-js');
 const bodyParser = require('body-parser');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 const { localDb, testConnections, syncToSupabase, getSyncStatus } = require('./db');
@@ -46,51 +46,8 @@ async function appendCsv(record) {
   }
 }
 
-// Setup pengkoneksian MySQL Server dengan error handling yang lebih baik
-const pool = mysql.createPool({
-  host: process.env.DB_HOST || 'localhost',
-  port: process.env.DB_PORT || 3306,
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASS || '',
-  database: process.env.DB_NAME || 'luas_volume_db',
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
-  acquireTimeout: 60000,
-  timeout: 60000
-});
-
-async function ensureTable() {
-  let conn;
-  try {
-    const create = `
-    CREATE TABLE IF NOT EXISTS calculations (
-      id INT AUTO_INCREMENT PRIMARY KEY,
-      timestamp DATETIME NOT NULL,
-      name VARCHAR(255),
-      school VARCHAR(255),
-      age INT,
-      address TEXT,
-      phone VARCHAR(50),
-      shape VARCHAR(50),
-      type VARCHAR(20),
-      parameters JSON,
-      result DOUBLE
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-    `;
-    
-    conn = await pool.getConnection();
-    await conn.query(create);
-    console.log('Database table ensured successfully');
-  } catch (err) {
-    console.error('DB table ensure failed:', err.message);
-  } finally {
-    if (conn) conn.release();
-  }
-}
-
-// Initialize database table
-ensureTable();
+// Setup Supabase client
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
 
 // Helpers: calculation functions
 function calcAreaOrVolume(shape, vars) {
@@ -170,46 +127,26 @@ app.post('/calculate', async (req, res) => {
       return res.status(400).send('Shape is required');
     }
 
-    // Kumpulkan parameter yang relevan tergantung pada bentuk
-    const params = {};
-    ['s','a','t','r','h'].forEach(k => { 
-      if (req.body[k]) params[k] = req.body[k]; 
-    });
-
-    const calc = calcAreaOrVolume(shape, params);
-    if (calc.error) return res.status(400).send(calc.error);
-
-    const timestamp = new Date();
-    const record = {
-      timestamp: timestamp.toISOString().slice(0,19).replace('T',' '),
-      name: name || '',
-      school: school || '',
-      age: age ? parseInt(age) : null,
-      address: address || '',
-      phone: phone || '',
-      shape,
-      type: calc.type,
-      parameters: JSON.stringify(params),
-      result: calc.result
-    };
-
-    // Menyimpan ke CSV
-    try {
-      await appendCsv(record);
-    } catch (e) {
-      console.error('CSV save failed', e.message);
-    }
-
-    // Menyimpan ke DB
-    try {
-      conn = await pool.getConnection();
-      const q = `INSERT INTO calculations (timestamp,name,school,age,address,phone,shape,type,parameters,result) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-      await conn.query(q, [timestamp, record.name, record.school, record.age, record.address, record.phone, record.shape, record.type, record.parameters, record.result]);
-    } catch (e) {
-      console.error('DB save failed', e.message);
-    } finally {
-      if (conn) conn.release();
-    }
+  // Menyimpan ke Supabase
+  try {
+    const { error } = await supabase
+      .from('calculations')
+      .insert({
+        timestamp: timestamp.toISOString(),
+        name: record.name,
+        school: record.school,
+        age: record.age,
+        address: record.address,
+        phone: record.phone,
+        shape: record.shape,
+        type: record.type,
+        parameters: params, // pass object directly for jsonb
+        result: record.result
+      });
+    if (error) throw error;
+  } catch (e) {
+    console.error('Supabase save failed', e.message);
+  }
 
     res.render('result', { record });
   } catch (error) {
@@ -220,137 +157,54 @@ app.post('/calculate', async (req, res) => {
 });
 
 app.get('/dashboard', async (req, res) => {
-  let conn;
-  try {
-    console.log('Dashboard route accessed');
-    
-    // Baca statistik dari DB dengan pengurutan opsional untuk tabel "terbaru"
-    const allowedSort = { name: 'name', school: 'school', age: 'age', timestamp: 'timestamp' };
-    const sort = req.query.sort && allowedSort[req.query.sort] ? req.query.sort : 'timestamp';
-    const order = (req.query.order && req.query.order.toLowerCase() === 'asc') ? 'ASC' : 'DESC';
+  // Baca statistik dari Supabase dengan pengurutan opsional untuk tabel "terbaru"
+  const allowedSort = { name: 'name', school: 'school', age: 'age', timestamp: 'timestamp' };
+  const sort = req.query.sort && allowedSort[req.query.sort] ? req.query.sort : 'timestamp';
+  const order = (req.query.order && req.query.order.toLowerCase() === 'asc') ? 'asc' : 'desc';
 
-    // Default data structure in case of database error
-    const defaultData = {
-      stats: [],
-      totals: 0,
-      last: [],
-      sort: sort,
-      order: order.toLowerCase(),
-      categoryStats: {
-        flat: [
-          { shape: 'persegi', count: 0, percent: 0 },
-          { shape: 'segitiga', count: 0, percent: 0 },
-          { shape: 'lingkaran', count: 0, percent: 0 }
-        ],
-        space: [
-          { shape: 'kubus', count: 0, percent: 0 },
-          { shape: 'limas', count: 0, percent: 0 },
-          { shape: 'tabung', count: 0, percent: 0 }
-        ]
-      }
+  try {
+    // Statistik per bentuk
+    const { data: stats, error: statsError } = await supabase
+      .from('calculations')
+      .select('shape, type, cnt: count(*), avg_result: avg(result), min_result: min(result), max_result: max(result)')
+      .group('shape, type');
+    if (statsError) throw statsError;
+
+    // Total perhitungan
+    const { count: totalCount, error: countError } = await supabase
+      .from('calculations')
+      .select('*', { count: 'exact', head: true });
+    if (countError) throw countError;
+
+    // 20 catatan terakhir dengan pengurutan yang diminta
+    const { data: last, error: lastError } = await supabase
+      .from('calculations')
+      .select('*')
+      .order(sort, { ascending: order === 'asc' })
+      .limit(20);
+    if (lastError) throw lastError;
+
+    // Mengelompokkan statistik berdasarkan kategori bentuk
+    // Bangun Datar: persegi, segitiga, lingkaran
+    // Bangun Ruang: kubus, limas, tabung
+    // Hitung total per kategori untuk persentase
+    const flatShapes = ['persegi','segitiga','lingkaran'];
+    const spaceShapes = ['kubus','limas','tabung'];
+    const counts = {};
+    stats.forEach(r => { counts[r.shape] = r.cnt; });
+
+    const flatTotal = flatShapes.reduce((s, sh) => s + (counts[sh] || 0), 0);
+    const spaceTotal = spaceShapes.reduce((s, sh) => s + (counts[sh] || 0), 0);
+
+    const categoryStats = {
+      flat: flatShapes.map(sh => ({ shape: sh, count: counts[sh] || 0, percent: flatTotal ? +( (counts[sh]||0) / flatTotal * 100 ).toFixed(1) : 0 })),
+      space: spaceShapes.map(sh => ({ shape: sh, count: counts[sh] || 0, percent: spaceTotal ? +( (counts[sh]||0) / spaceTotal * 100 ).toFixed(1) : 0 }))
     };
 
-    try {
-      conn = await pool.getConnection();
-      console.log('Database connection established');
-
-      // Test database connection
-      await conn.query('SELECT 1');
-      console.log('Database query test successful');
-
-      const [rows] = await conn.query('SELECT shape, type, COUNT(*) as cnt, AVG(result) as avg_result, MIN(result) as min_result, MAX(result) as max_result FROM calculations GROUP BY shape, type');
-      console.log('Stats query successful, rows:', rows.length);
-
-      // total perhitungan per bentuk
-      const [totals] = await conn.query('SELECT COUNT(*) as total FROM calculations');
-      console.log('Totals query successful:', totals[0].total);
-
-      // 20 catatan terakhir dengan pengurutan yang diminta
-      const orderBy = allowedSort[sort];
-      const q = `SELECT * FROM calculations ORDER BY ${orderBy} ${order} LIMIT 20`;
-      const [last] = await conn.query(q);
-      console.log('Last records query successful, records:', last.length);
-
-      // Mengelompokkan statistik berdasarkan kategori bentuk
-      // Bangun Datar: persegi, segitiga, lingkaran
-      // Bangun Ruang: kubus, limas, tabung
-      // Hitung total per kategori untuk persentase
-      const flatShapes = ['persegi','segitiga','lingkaran'];
-      const spaceShapes = ['kubus','limas','tabung'];
-      const counts = {};
-      rows.forEach(r => { counts[r.shape] = r.cnt; });
-
-      const flatTotal = flatShapes.reduce((s, sh) => s + (counts[sh] || 0), 0);
-      const spaceTotal = spaceShapes.reduce((s, sh) => s + (counts[sh] || 0), 0);
-
-      const categoryStats = {
-        flat: flatShapes.map(sh => ({ 
-          shape: sh, 
-          count: counts[sh] || 0, 
-          percent: flatTotal ? +((counts[sh]||0) / flatTotal * 100).toFixed(1) : 0 
-        })),
-        space: spaceShapes.map(sh => ({ 
-          shape: sh, 
-          count: counts[sh] || 0, 
-          percent: spaceTotal ? +((counts[sh]||0) / spaceTotal * 100).toFixed(1) : 0 
-        }))
-      };
-
-      const dashboardData = {
-        stats: rows,
-        totals: totals[0].total,
-        last,
-        sort,
-        order: order.toLowerCase(),
-        categoryStats
-      };
-
-      console.log('About to render dashboard with data');
-      res.render('dashboard', dashboardData);
-
-    } catch (dbError) {
-      console.error('Database error in dashboard:', dbError.message);
-      console.log('Rendering dashboard with default data due to DB error');
-      res.render('dashboard', defaultData);
-    }
-
-  } catch (error) {
-    console.error('Dashboard route error:', error);
-    console.error('Error stack:', error.stack);
-    
-    try {
-      // Try to render with default data
-      res.status(500).render('dashboard', {
-        stats: [],
-        totals: 0,
-        last: [],
-        sort: 'timestamp',
-        order: 'desc',
-        categoryStats: {
-          flat: [
-            { shape: 'persegi', count: 0, percent: 0 },
-            { shape: 'segitiga', count: 0, percent: 0 },
-            { shape: 'lingkaran', count: 0, percent: 0 }
-          ],
-          space: [
-            { shape: 'kubus', count: 0, percent: 0 },
-            { shape: 'limas', count: 0, percent: 0 },
-            { shape: 'tabung', count: 0, percent: 0 }
-          ]
-        }
-      });
-    } catch (renderError) {
-      console.error('Dashboard render error:', renderError);
-      res.status(500).send('Dashboard temporarily unavailable. Please check logs.');
-    }
-  } finally {
-    if (conn) {
-      try {
-        conn.release();
-      } catch (releaseError) {
-        console.error('Error releasing connection:', releaseError);
-      }
-    }
+    res.render('dashboard', { stats, totals: totalCount, last, sort, order, categoryStats });
+  } catch (e) {
+    console.error('Supabase read failed', e.message);
+    res.render('dashboard', { stats: [], totals: 0, last: [], sort: 'timestamp', order: 'desc' });
   }
 });
 

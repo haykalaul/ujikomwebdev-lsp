@@ -1,177 +1,239 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dashboard Statistik</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="/style.css" rel="stylesheet">
-</head>
-<body class="bg-light">
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard Statistik</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link href="/style.css" rel="stylesheet" />
+  </head>
+  <body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+      <div class="container">
+        <a class="navbar-brand" href="/">Luas & Volume</a>
+        <div class="collapse navbar-collapse">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="/">Form Input</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
     <div class="container">
-      <a class="navbar-brand" href="/">Luas & Volume</a>
-      <div class="collapse navbar-collapse">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="/">Form Input</a></li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-4 mb-3">
-        <div class="card text-white bg-success mb-3">
-          <div class="card-body">
-            <h5 class="card-title">Total Percobaan</h5>
-            <p class="card-text fs-3"><%= totals %></p>
-          </div>
-        </div>
-        <div class="card mb-3" id="csv-card">
-          <div class="card-body">
-            <h5 class="card-title">Rekap CSV</h5>
-            <div id="csv-info">
-              <p class="text-muted">Memeriksa status file CSV...</p>
+      <div class="row">
+        <div class="col-lg-4 mb-3">
+          <div class="card text-white bg-success mb-3">
+            <div class="card-body">
+              <h5 class="card-title">Total Percobaan</h5>
+              <p class="card-text fs-3"><%= totals %></p>
             </div>
-            <p class="mt-2"><a id="csv-download" class="btn btn-outline-primary" href="/download-csv">Download CSV</a></p>
+          </div>
+          <div class="card mb-3" id="csv-card">
+            <div class="card-body">
+              <h5 class="card-title">Rekap CSV</h5>
+              <div id="csv-info">
+                <p class="text-muted">Memeriksa status file CSV...</p>
+              </div>
+              <p class="mt-2">
+                <a
+                  id="csv-download"
+                  class="btn btn-outline-primary"
+                  href="/download-csv"
+                  >Download CSV</a
+                >
+              </p>
+            </div>
+          </div>
+
+          <div class="card mb-3">
+            <div class="card-body">
+              <h5 class="card-title">Bangun Datar (Luas)</h5>
+              <% if (categoryStats && categoryStats.flat) { %> <%
+              categoryStats.flat.forEach(s => { %> <% const p = s.percent + '%';
+              %>
+              <div
+                class="d-flex justify-content-between align-items-center mb-1"
+              >
+                <div>
+                  <strong><%= s.shape %></strong>
+                  <small class="text-muted">(<%= s.count %>)</small>
+                </div>
+                <div>
+                  <span class="badge bg-primary-"><%= s.percent %>%</span>
+                </div>
+              </div>
+              <div class="progress mb-2" style="height: 8px">
+                <div
+                  class="progress-bar"
+                  role="progressbar"
+                  style="width: <%=p%>"
+                  aria-valuenow="<%= s.percent %>"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                ></div>
+              </div>
+              <% }) %> <% } else { %>
+              <p class="text-muted">No data</p>
+              <% } %>
+            </div>
+          </div>
+          <div class="card mb-3">
+            <div class="card-body">
+              <h5 class="card-title">Bangun Ruang (Volume)</h5>
+              <% if (categoryStats && categoryStats.space) { %> <%
+              categoryStats.space.forEach(s => { %> <% const p = s.percent +
+              '%'; %>
+              <div
+                class="d-flex justify-content-between align-items-center mb-1"
+              >
+                <div>
+                  <strong><%= s.shape %></strong>
+                  <small class="text-muted">(<%= s.count %>)</small>
+                </div>
+                <div>
+                  <span class="badge bg-primary-"><%= s.percent %>%</span>
+                </div>
+              </div>
+              <div class="progress mb-2" style="height: 8px">
+                <div
+                  class="progress-bar bg-info"
+                  role="progressbar"
+                  style="width: <%=p%>"
+                  aria-valuenow="<%= s.percent %>"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                ></div>
+              </div>
+              <% }) %> <% } else { %>
+              <p class="text-muted">No data</p>
+              <% } %>
+            </div>
           </div>
         </div>
 
-        <div class="card mb-3">
-          <div class="card-body">
-            <h5 class="card-title">Bangun Datar (Luas)</h5>
-            <% if (categoryStats && categoryStats.flat) { %>
-              <% categoryStats.flat.forEach(s => { %>
-                <% const p = s.percent + '%'; %>
-                <div class="d-flex justify-content-between align-items-center mb-1">
-                  <div><strong><%= s.shape %></strong> <small class="text-muted">(<%= s.count %>)</small></div>
-                  <div><span class="badge bg-primary"><%= s.percent %>%</span></div>
+        <div class="col-lg-8">
+          <div class="card mb-3">
+            <div class="card-body">
+              <h5 class="card-title">Visual Perbandingan Persentase</h5>
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <div class="card shadow-sm">
+                    <div class="card-body">
+                      <h6 class="card-subtitle mb-2 text-muted">
+                        Bangun Datar (2D)
+                      </h6>
+                      <canvas id="chartFlat" height="180"></canvas>
+                    </div>
+                  </div>
                 </div>
-                <div class="progress mb-2" style="height:8px"><div class="progress-bar" role="progressbar" style="width:<%=p%>;" aria-valuenow="<%= s.percent %>" aria-valuemin="0" aria-valuemax="100"></div></div>
-              <% }) %>
-            <% } else { %>
-              <p class="text-muted">No data</p>
-            <% } %>
-          </div>
-        </div>
-  <div class="card mb-3">
-          <div class="card-body">
-            <h5 class="card-title">Bangun Ruang (Volume)</h5>
-            <% if (categoryStats && categoryStats.space) { %>
-              <% categoryStats.space.forEach(s => { %>
-                <% const p = s.percent + '%'; %>
-                <div class="d-flex justify-content-between align-items-center mb-1">
-                  <div><strong><%= s.shape %></strong> <small class="text-muted">(<%= s.count %>)</small></div>
-                  <div><span class="badge bg-primary"><%= s.percent %>%</span></div>
-                </div>
-                <div class="progress mb-2" style="height:8px"><div class="progress-bar bg-info" role="progressbar" style="width:<%=p%>;" aria-valuenow="<%= s.percent %>" aria-valuemin="0" aria-valuemax="100"></div></div>
-              <% }) %>
-            <% } else { %>
-              <p class="text-muted">No data</p>
-            <% } %>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-lg-8">
-        <div class="card mb-3">
-          <div class="card-body">
-            <h5 class="card-title">Visual Perbandingan Persentase</h5>
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <div class="card shadow-sm">
-                  <div class="card-body">
-                    <h6 class="card-subtitle mb-2 text-muted">Bangun Datar(3D)</h6>
-                    <canvas id="chartFlat" height="180"></canvas>
+                <div class="col-md-6 mb-3">
+                  <div class="card shadow-sm">
+                    <div class="card-body">
+                      <h6 class="card-subtitle mb-2 text-muted">
+                        Bangun Ruang (3D)
+                      </h6>
+                      <canvas id="chartSpace" height="180"></canvas>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div class="col-md-6 mb-3">
-                <div class="card shadow-sm">
-                  <div class="card-body">
-                    <h6 class="card-subtitle mb-2 text-muted">Bangun Ruang(2D)</h6>
-                    <canvas id="chartSpace" height="180"></canvas>
-                  </div>
-                </div>
-              </div>
             </div>
-
           </div>
-        </div>
 
-        <div class="card mb-3">
-          <div class="card-body">
-            <h5 class="card-title">Statistik per shape</h5>
-            <div class="table-responsive">
-              <table class="table table-sm table-striped">
-                <thead>
-                  <tr><th>Shape</th><th>Type</th><th>Count</th><th>Avg</th><th>Min</th><th>Max</th></tr>
-                </thead>
-                <tbody>
-                  <% stats.forEach(s => { %>
+          <div class="card mb-3">
+            <div class="card-body">
+              <h5 class="card-title">Statistik per shape</h5>
+              <div class="table-responsive">
+                <table class="table table-sm table-striped">
+                  <thead>
+                    <tr>
+                      <th>Shape</th>
+                      <th>Type</th>
+                      <th>Count</th>
+                      <th>Avg</th>
+                      <th>Min</th>
+                      <th>Max</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% stats.forEach(s => { %>
                     <tr>
                       <td><%= s.shape %></td>
                       <td><%= s.type %></td>
                       <td><%= s.cnt %></td>
-                      <td><%= s.avg_result ? s.avg_result.toFixed(3) : '' %></td>
-                      <td><%= s.min_result ? s.min_result.toFixed(3) : '' %></td>
-                      <td><%= s.max_result ? s.max_result.toFixed(3) : '' %></td>
+                      <td>
+                        <%= s.avg_result ? s.avg_result.toFixed(3) : '' %>
+                      </td>
+                      <td>
+                        <%= s.min_result ? s.min_result.toFixed(3) : '' %>
+                      </td>
+                      <td>
+                        <%= s.max_result ? s.max_result.toFixed(3) : '' %>
+                      </td>
                     </tr>
-                  <% }) %>
-                </tbody>
-              </table>
+                    <% }) %>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Catatan terbaru</h5>
-            <div class="table-responsive">
-              <table class="table table-sm">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>
-                      <% const tsDir = (sort === 'timestamp' && order === 'asc') ? 'desc' : 'asc'; %>
-                      <a href="?sort=timestamp&order=<%= tsDir %>">Tanggal
-                        <% if (sort === 'timestamp') { %>
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Catatan terbaru</h5>
+              <div class="table-responsive">
+                <table class="table table-sm">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>
+                        <% const tsDir = (sort === 'timestamp' && order ===
+                        'asc') ? 'desc' : 'asc'; %>
+                        <a href="?sort=timestamp&order=<%= tsDir %>"
+                          >Tanggal <% if (sort === 'timestamp') { %>
                           <small><%= order === 'asc' ? '↑' : '↓' %></small>
-                        <% } %>
-                      </a>
-                    </th>
-                    <th>
-                      <% const nameDir = (sort === 'name' && order === 'asc') ? 'desc' : 'asc'; %>
-                      <a href="?sort=name&order=<%= nameDir %>">Nama
-                        <% if (sort === 'name') { %>
+                          <% } %>
+                        </a>
+                      </th>
+                      <th>
+                        <% const nameDir = (sort === 'name' && order === 'asc')
+                        ? 'desc' : 'asc'; %>
+                        <a href="?sort=name&order=<%= nameDir %>"
+                          >Nama <% if (sort === 'name') { %>
                           <small><%= order === 'asc' ? '↑' : '↓' %></small>
-                        <% } %>
-                      </a>
-                    </th>
-                    <th>
-                      <% const schoolDir = (sort === 'school' && order === 'asc') ? 'desc' : 'asc'; %>
-                      <a href="?sort=school&order=<%= schoolDir %>">Sekolah
-                        <% if (sort === 'school') { %>
+                          <% } %>
+                        </a>
+                      </th>
+                      <th>
+                        <% const schoolDir = (sort === 'school' && order ===
+                        'asc') ? 'desc' : 'asc'; %>
+                        <a href="?sort=school&order=<%= schoolDir %>"
+                          >Sekolah <% if (sort === 'school') { %>
                           <small><%= order === 'asc' ? '↑' : '↓' %></small>
-                        <% } %>
-                      </a>
-                    </th>
-                    <th>Shape</th>
-                    <th>Type</th>
-                    <th>
-                      <% const ageDir = (sort === 'age' && order === 'asc') ? 'desc' : 'asc'; %>
-                      <a href="?sort=age&order=<%= ageDir %>">Usia
-                        <% if (sort === 'age') { %>
+                          <% } %>
+                        </a>
+                      </th>
+                      <th>Shape</th>
+                      <th>Type</th>
+                      <th>
+                        <% const ageDir = (sort === 'age' && order === 'asc') ?
+                        'desc' : 'asc'; %>
+                        <a href="?sort=age&order=<%= ageDir %>"
+                          >Usia <% if (sort === 'age') { %>
                           <small><%= order === 'asc' ? '↑' : '↓' %></small>
-                        <% } %>
-                      </a>
-                    </th>
-                    <th>Result</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% last.forEach(r => { %>
+                          <% } %>
+                        </a>
+                      </th>
+                      <th>Hasil Hitung</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% last.forEach(r => { %>
                     <tr>
                       <td><%= r.id %></td>
                       <td><%= r.timestamp %></td>
@@ -182,68 +244,72 @@
                       <td><%= r.age %></td>
                       <td><%= r.result %></td>
                     </tr>
-                  <% }) %>
-                </tbody>
-              </table>
+                    <% }) %>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <script>
-  // Prepare data from server
-  const categoryStats = <%- JSON.stringify(categoryStats || { flat: [], space: [] }) %>;
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+      // Prepare data from server
+      const categoryStats = <%- JSON.stringify(categoryStats || { flat: [], space: [] }) %>;
 
-    function makeDoughnut(canvasId, items, colors) {
-      const labels = items.map(i => i.shape);
-      const data = items.map(i => i.count);
-      const ctx = document.getElementById(canvasId).getContext('2d');
-      return new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels,
-          datasets: [{ data, backgroundColor: colors || ['#0d6efd','#6f42c1','#20c997'], hoverOffset: 6 }]
-        },
-        options: { plugins: { legend: { position: 'bottom' } } }
-      });
-    }
-
-    // Create charts
-    try {
-      makeDoughnut('chartFlat', categoryStats.flat);
-      makeDoughnut('chartSpace', categoryStats.space, ['#0dcaf0','#ffc107','#198754']);
-    } catch (e) { console.error('Chart init error', e); }
-  </script>
-  <script>
-    async function fetchCsvInfo() {
-      try {
-        const res = await fetch('/api/csv-info');
-        if (!res.ok) throw new Error('fetch failed');
-        const json = await res.json();
-        const el = document.getElementById('csv-info');
-        const dl = document.getElementById('csv-download');
-        if (!json.exists) {
-          el.innerHTML = '<p class="text-danger">CSV belum tersedia</p>';
-          dl.classList.add('disabled');
-          dl.setAttribute('aria-disabled','true');
-        } else {
-          const sizeKB = (json.size/1024).toFixed(1);
-          el.innerHTML = `<div>Rows: <strong>${json.rows ?? 'n/a'}</strong></div><div>Size: <strong>${sizeKB} KB</strong></div><div>Updated: <strong>${json.mtime}</strong></div>`;
-          dl.classList.remove('disabled');
-          dl.removeAttribute('aria-disabled');
+        function makeDoughnut(canvasId, items, colors) {
+          const labels = items.map(i => i.shape);
+          const data = items.map(i => i.count);
+          const ctx = document.getElementById(canvasId).getContext('2d');
+          return new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+              labels,
+              datasets: [{ data, backgroundColor: colors || ['#0d6efd','#6f42c1','#20c997'], hoverOffset: 6 }]
+            },
+            options: { plugins: { legend: { position: 'bottom' } } }
+          });
         }
-      } catch (e) {
-        console.error('CSV info error', e);
-      }
-    }
 
-    // initial fetch and poll every 8s
-    fetchCsvInfo();
-    setInterval(fetchCsvInfo, 8000);
-  </script>
-</body>
+        // Create charts
+        try {
+          makeDoughnut('chartFlat', categoryStats.flat);
+          makeDoughnut('chartSpace', categoryStats.space, ['#0dcaf0','#ffc107','#198754']);
+        } catch (e) { console.error('Chart init error', e); }
+    </script>
+    <script>
+      async function fetchCsvInfo() {
+        try {
+          const res = await fetch("/api/csv-info");
+          if (!res.ok) throw new Error("fetch failed");
+          const json = await res.json();
+          const el = document.getElementById("csv-info");
+          const dl = document.getElementById("csv-download");
+          if (!json.exists) {
+            el.innerHTML = '<p class="text-danger">CSV belum tersedia</p>';
+            dl.classList.add("disabled");
+            dl.setAttribute("aria-disabled", "true");
+          } else {
+            const sizeKB = (json.size / 1024).toFixed(1);
+            el.innerHTML = `<div>Rows: <strong>${
+              json.rows ?? "n/a"
+            }</strong></div><div>Size: <strong>${sizeKB} KB</strong></div><div>Updated: <strong>${
+              json.mtime
+            }</strong></div>`;
+            dl.classList.remove("disabled");
+            dl.removeAttribute("aria-disabled");
+          }
+        } catch (e) {
+          console.error("CSV info error", e);
+        }
+      }
+
+      // initial fetch and poll every 8s
+      fetchCsvInfo();
+      setInterval(fetchCsvInfo, 8000);
+    </script>
+  </body>
 </html>

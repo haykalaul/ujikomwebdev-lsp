@@ -1,155 +1,275 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SITUNGBA SD Adibuana — Sistem Hitung Luas & Volume</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="/style.css" rel="stylesheet">
-</head>
-<body class="bg-light">
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <div class="container">
-      <a class="navbar-brand d-flex align-items-center" href="/">
-        <img src="/logosd.jpg" alt="SD Logo" class="me-2" style="width:36px;height:36px">
-        <span>SITUNGBA SD Adibuana</span>
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navMain">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="/form">Form Hitung</a></li>
-          <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
-        </ul>
-      </div>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SITUNGBA SD Adibuana — Sistem Hitung Luas & Volume</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link href="/style.css" rel="stylesheet" />
+  </head>
+  <body class="bg-light">
+    <div class="position-absolute top-0 start-0 w-100 h-100 bg-primary opacity-50">
+      <img src="/hero.png" style="width:fit-content;height: auto" alt=""></div>
     </div>
-  </nav>
-
-  <header class="py-5">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col-lg-6">
-          <div class="hero">
-            <h1 class="display-5 fw-bold">SITUNGBA — Sistem Interaktif Hitung Bangun Datar & Ruang</h1>
-            <p class="lead text-muted">Aplikasi web untuk siswa SD menghitung luas bangun datar dan volume bangun ruang secara interaktif, menyimpan hasil ke CSV dan database, serta menampilkan statistik real-time untuk guru dan pemantauan.</p>
-
-            <div class="d-flex gap-2 mt-4">
-              <a href="/form" class="btn btn-primary btn-lg">Mulai Hitung</a>
-              <a href="/dashboard" class="btn btn-outline-secondary btn-lg">Lihat Dashboard</a>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-6 d-none d-lg-block">
-          <div class="card shadow border-0">
-            <div class="card-body p-4">
-              <img src="/hero1.png" alt="logo" style="width:360px; display:block; margin:0 auto">
-              <p class="text-center mt-3 text-muted">Visualisasi, rekap, dan unduh data perhitungan siswa.</p>
-            </div>
-          </div>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+      <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="/">
+          <img
+            src="/logosd.jpg"
+            alt="SD Logo"
+            class="me-2"
+            style="width: 36px; height: 36px"
+          />
+          <span>SITUNGBA SD Adibuana</span>
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navMain"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navMain">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="/form">Form Hitung</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/dashboard">Dashboard</a>
+            </li>
+          </ul>
         </div>
       </div>
-    </div>
-  </header>
+    </nav>
 
-  <section class="py-5 bg-white border-top">
-    <div class="container">
-      <h2 class="h4 mb-3">Fitur Utama</h2>
-      <div class="row g-4">
-        <div class="col-md-4">
-          <div class="card h-100">
-            <div class="card-body">
-              <h5>Form Interaktif</h5>
-              <p class="text-muted">Form sederhana untuk siswa mengisi biodata dan variabel bangun, dengan validasi dan penyimpanan otomatis.</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card h-100">
-            <div class="card-body">
-              <h5>Rekap & Export</h5>
-              <p class="text-muted">Hasil disimpan ke CSV dan MySQL, dapat diunduh langsung dari dashboard.</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card h-100">
-            <div class="card-body">
-              <h5>Dashboard Statistik</h5>
-              <p class="text-muted">Grafik persentase, statistik per bangun, dan daftar percobaan terbaru.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+    <header class="py-5">
+      <div class="container">
+        <div class="bg-body">
+        <div class="row align-items-center">
+          <div class="col-lg-6">
+            <div class="hero">
+              <h1 class="display-5 fw-bold">
+                SITUNGBA — Sistem Interaktif Hitung Bangun Datar & Ruang
+              </h1>
+              <p class="lead text-muted">
+                Aplikasi web untuk siswa SD menghitung luas bangun datar dan
+                volume bangun ruang secara interaktif, menyimpan hasil ke CSV
+                dan database, serta menampilkan statistik real-time untuk guru
+                dan pemantauan.
+              </p>
 
-  <section class="py-5 bg-light">
-    <div class="container">
-      <h2 class="h4 mb-4 text-center">Apa kata mereka</h2>
-      <div id="testimonials" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-inner">
-          <div class="carousel-item active">
-            <div class="card p-4 mx-auto" style="max-width:720px">
-              <div class="card-body">
-                <p class="mb-2">"Sistem ini mempermudah guru memantau hasil latihan siswa dan melihat grafik perkembangan."</p>
-                <p class="text-muted mb-0"><strong>Ibu Siti</strong> — Guru Matematika</p>
-              </div>
-            </div>
-          </div>
-          <div class="carousel-item">
-            <div class="card p-4 mx-auto" style="max-width:720px">
-              <div class="card-body">
-                <p class="mb-2">"Anak-anak suka karena interaktif dan visualnya menarik."</p>
-                <p class="text-muted mb-0"><strong>Bapak Agus</strong> — Orang Tua</p>
+              <div class="d-flex gap-2 mt-4">
+                <a href="/form" class="btn btn-primary- btn-lg">Mulai Hitung</a>
+                <a href="#" class="btn btn-text gap-1">
+                  <span
+                    >Lihat Selengkapnya
+                    <image>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        class="bi bi-arrow-right"
+                        viewBox="0 0 16 16"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"
+                        />
+                      </svg> </image></span
+                ></a>
               </div>
             </div>
           </div>
         </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#testimonials" data-bs-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#testimonials" data-bs-slide="next">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        </button>
       </div>
-    </div>
-  </section>
+    </header>
 
-  <section class="py-5 bg-white">
-    <div class="container">
-      <h2 class="h4 mb-4 text-center">Pricing & Plans</h2>
-      <div class="row g-3 justify-content-center">
-        <div class="col-md-4">
-          <div class="card h-100 text-center">
-            <div class="card-body">
-              <h5 class="card-title">Free</h5>
-              <p class="card-text">Basic fitur untuk latihan siswa lokal, CSV export.</p>
-              <p class="display-6">Rp0</p>
-              <a href="/form" class="btn btn-outline-primary">Start Free</a>
+    <section class="py-5 bg-white border-top gap-1">
+      <div class="container">
+        <div class="badge">
+           Fitur Utama
+        </div>
+        <h3 class="border-primary text-center">Mengapa memilih Kami?</h3>
+        <div class="row g-4">
+          <div class="col-md-4">
+            <div class="card h-100">
+              <div class="card-body">
+                <image>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="32"
+                    height="32"
+                    fill="currentColor"
+                    class="bi bi-ui-checks-grid"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      d="M2.5 1A1.5 1.5 0 0 0 1 2.5v11A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-11A1.5 1.5 0 0 0 13.5 1h-11zm11 1a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-3a.5.5 0 0 1 .5-.5h3zm-4 .5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-3zm-4-.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-3zm-4 .5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-3zm12 .75a.75.75 0 0 1 .75-.75h2a.75.75 0 0 -1 .75v2a2.25,2,25,0,01-
+                      2.25,2.25h-2a.75.75,0,0,1-.75-.75v-2zm0,4a.75.75,0,0,1,.75-.75h2a.75.75,0,0,1,.75.75v2a2.25,2.25,0,0,1-2.25,2.25h-2a.75.75,0,0,1-.75-.75v-2zm-4-4a.75.75,0,0,1,.75-.75h2a.75.75,0,0,1,.75.75v2a2.25,2.25,0,0,1-2.25,2.25h-2a.75.75,0,0,1-.75-.75v-2zm0,4a.75.75,0,0,1,.75-.75h2a.75.75,0,0,1,.75.75v2a2.25,2.25,0,0,1-2.25,2.25h-2a.75.75,0,0,1-.75-.75v-2zm-4-4a.75.75,0,0,1,.75-.75h2a.75.75,0,0,1,.75.75v2a2.25,2.25,0,0,1-2.25,2.25h-2a.75.75,0,0,1-.75-.75v-2zm0,4a.75.75,0,0 1,.75-.75h2a.75.75 0 0 1,.75 .75v2a2 .25 2 .25 0 01 - 2 .25 2 .25 h - 2 a . 7 5 .7 5 0 01 - .7 5 - .7 5 v - 2 z m - 4 - 4 a .7 5 .7 5 0 01 .7 5 - .7 5 h 2 a .7 5 .7 5 0 01 .7 5 v 2 a 2 .25 2 .25 0 01 - 2 .25 2 .
+                      25 h - 2 a .7 5 .7 5 0 01 - .7 5 - .7 5 v - 2 z m 0 4 a .7 5 .7 5 0 01 .7 5 - .7 5 h 2 a .7 5 .7 5 0 01 .7 5 v 2 a 2 .25 2 .25 0 01 - 2 .25 2 .25 h - 2 a .7 5 .7 5 0 01 - .7 5 - .7 5 v - 2 z"
+                    />
+                  </svg>
+                </image>
+                <h5>Form Interaktif</h5>
+                <p class="text-muted">
+                  Form sederhana untuk siswa mengisi biodata dan variabel
+                  bangun, dengan validasi dan penyimpanan otomatis.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card h-100">
+              <div class="card-body">
+                <image>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="32"
+                    height="32"
+                    fill="currentColor"
+                    class="bi bi-file-earmark-spreadsheet"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3-1A1.5 1.5 0 0 1 11.5 3H9V1.5L11 .5zM4.634 7.646a.5.5 0 0 0-.468.342l-.5 1.5a.5.5 0 0 0 .936.352l.166-.5h1.664l-.166.5a.5.5 0 0 0 .936.352l.5-1.5a.5.5 0 0 0-.468-.684h-2zm3.596-.342a.5.5 0 0 1 .468.342l.5 1.5a.5.5 0 0 1-.936.352l-.166-.5H6.868l.166.5a.5.5 0 0 1-.936.352l-.5-1.5a.5.5 0 0 1 .468-.684h2zm3.596-.342a.5.5 0 0 1 .468.342l.5 1.5a.5.5 0 0 1-.936.352l-.166-.5h-1.664l.166.5a.5.5 0 0 1-.936.352l-.5-1.5a.5.5 0 0 1 .468-.684h2z"
+                    />
+                  </svg>
+                </image>
+                <h5>Rekap & Export</h5>
+                <p class="text-muted">
+                  Hasil disimpan ke CSV dan MySQL, dapat diunduh langsung dari
+                  dashboard.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card h-100">
+              <div class="card-body">
+                <image>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="32"
+                    height="32"
+                    fill="currentColor"
+                    class="bi bi-bar-chart-line"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      d="M.5 0a.5.5 0 0 1 .5.5v15a.5.5 0 0 1-1 0V.5A.5.5 0 0 1 .5 0zm2 4a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v11a.5.5 0 0 1-1 0V4.5H3a.5.5 0 0 1-.5-.5zm3 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-1 0V6.5H6a.5.5 0 0 1-.5-.5zm3-1a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v10a.5.5 0 0 1-1 0V7.5H9a.5.5 0 0 1-.5-.5zm3-3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v13a.5.5 0 0 1-1 0V4.5h-1a.5.5,0,0,1-.5-.5z"
+                    />
+                  </svg>
+                <h5>Dashboard Statistik</h5>
+                <p class="text-muted">
+                  Grafik persentase, statistik per bangun, dan daftar percobaan
+                  terbaru.
+                </p>
+              </div>
             </div>
           </div>
         </div>
-        <div class="col-md-4">
-          <div class="card h-100 text-center border-primary">
-            <div class="card-body">
-              <h5 class="card-title">Pro</h5>
-              <p class="card-text">Includes dashboard analytics & priority support.</p>
-              <p class="display-6">Rp50.000</p>
-              <a href="/form" class="btn btn-primary">Start Pro</a>
+      </div>
+    </section>
+
+    <section class="py-5 bg-light">
+      <div class="container">
+        <div class="badge">Testimoni</div>
+        <h3 class="h4 mb-4 text-center">Apa kata mereka</h3>
+        <div id="testimonials" class="carousel slide" data-bs-ride="carousel">
+          <div class="carousel-inner">
+            <div class="carousel-item active">
+              <div class="card p-4 mx-auto" style="max-width: 720px">
+                <div class="card-body">
+                  <p class="mb-2">
+                    "Sistem ini mempermudah guru memantau hasil latihan siswa
+                    dan melihat grafik perkembangan."
+                  </p>
+                  <p class="text-muted mb-0">
+                    <strong>Ibu Siti</strong> — Guru Matematika
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="carousel-item">
+              <div class="card p-4 mx-auto" style="max-width: 720px">
+                <div class="card-body">
+                  <p class="mb-2">
+                    "Anak-anak suka karena interaktif dan visualnya menarik."
+                  </p>
+                  <p class="text-muted mb-0">
+                    <strong>Bapak Agus</strong> — Orang Tua
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button
+            class="carousel-control-prev"
+            type="button"
+            data-bs-target="#testimonials"
+            data-bs-slide="prev"
+          >
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          </button>
+          <button
+            class="carousel-control-next"
+            type="button"
+            data-bs-target="#testimonials"
+            data-bs-slide="next"
+          >
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-5 bg-white">
+      <div class="container">
+        <div class="badge">Pricing</div>
+        <h3 class="h4 mb-4 text-center">Pricing & Plans</h3>
+        <div class="row g-3 justify-content-center">
+          <div class="col-md-4">
+            <div class="card h-100 text-center">
+              <div class="card-body">
+                <h5 class="card-title">Free</h5>
+                <p class="card-text">
+                  Basic fitur untuk latihan siswa lokal, CSV export.
+                </p>
+                <p class="display-6">Rp0</p>
+                <a href="/form" class="btn btn-outline-primary">Start Free</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card h-100 text-center border-primary">
+              <div class="card-body">
+                <h5 class="card-title">Pro</h5>
+                <p class="card-text">
+                  Includes dashboard analytics & priority support.
+                </p>
+                <p class="display-6">Rp50.000</p>
+                <a href="/form" class="btn btn-primary- btn-lg">Start Pro</a>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <footer class="py-4 text-muted text-center">
-    <div class="container">
-      <small>&copy; <%= new Date().getFullYear() %> SITUNGBA SD Adibuana — Built with Aul Tech Studio</small>
-    </div>
-  </footer>
+    <footer class="py-4 text-muted text-center">
+      <div class="container">
+        <small
+          >&copy; <%= new Date().getFullYear() %> SITUNGBA SD Adibuana — Built
+          with Aul Tech Studio</small
+        >
+      </div>
+    </footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
 </html>

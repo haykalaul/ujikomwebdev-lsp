@@ -4,7 +4,8 @@
   "description": "Aplikasi untuk menghitung luas dan volume, menyimpan ke CSV dan MySQL",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "nodemon app.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.87.1",

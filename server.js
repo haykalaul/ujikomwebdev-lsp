@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
-const mysql = require('mysql2/promise');
+const { createClient } = require('@supabase/supabase-js');
 const bodyParser = require('body-parser');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 
@@ -40,45 +40,8 @@ async function appendCsv(record) {
   await csvWriter.writeRecords([record]);
 }
 
-// Setup pengkoneksian MySQL Server
-const pool = mysql.createPool({
-  host: process.env.DB_HOST || 'localhost',
-  port: process.env.DB_PORT || 3306,
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASS || '',
-  database: process.env.DB_NAME || 'luas_volume_db',
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
-});
-
-async function ensureTable() {
-  const create = `
-  CREATE TABLE IF NOT EXISTS calculations (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    timestamp DATETIME NOT NULL,
-    name VARCHAR(255),
-    school VARCHAR(255),
-    age INT,
-    address TEXT,
-    phone VARCHAR(50),
-    shape VARCHAR(50),
-    type VARCHAR(20),
-    parameters JSON,
-    result DOUBLE
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-  `;
-  const conn = await pool.getConnection();
-  try {
-    await conn.query(create);
-  } finally {
-    conn.release();
-  }
-}
-
-ensureTable().catch(err => {
-  console.error('DB table ensure failed:', err.message);
-});
+// Setup Supabase client
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
 
 // Helpers: calculation functions
 function calcAreaOrVolume(shape, vars) {
@@ -162,62 +125,78 @@ app.post('/calculate', async (req, res) => {
     console.error('CSV save failed', e.message);
   }
 
-  // Menyimpan ke DB
+  // Menyimpan ke Supabase
   try {
-    const conn = await pool.getConnection();
-    try {
-      const q = `INSERT INTO calculations (timestamp,name,school,age,address,phone,shape,type,parameters,result) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-      await conn.query(q, [timestamp, record.name, record.school, record.age, record.address, record.phone, record.shape, record.type, record.parameters, record.result]);
-    } finally {
-      conn.release();
-    }
+    const { error } = await supabase
+      .from('calculations')
+      .insert({
+        timestamp: timestamp.toISOString(),
+        name: record.name,
+        school: record.school,
+        age: record.age,
+        address: record.address,
+        phone: record.phone,
+        shape: record.shape,
+        type: record.type,
+        parameters: params, // pass object directly for jsonb
+        result: record.result
+      });
+    if (error) throw error;
   } catch (e) {
-    console.error('DB save failed', e.message);
+    console.error('Supabase save failed', e.message);
   }
 
   res.render('result', { record });
 });
 
 app.get('/dashboard', async (req, res) => {
-  // Baca statistik dari DB dengan pengurutan opsional untuk tabel “terbaru”
+  // Baca statistik dari Supabase dengan pengurutan opsional untuk tabel "terbaru"
   const allowedSort = { name: 'name', school: 'school', age: 'age', timestamp: 'timestamp' };
   const sort = req.query.sort && allowedSort[req.query.sort] ? req.query.sort : 'timestamp';
-  const order = (req.query.order && req.query.order.toLowerCase() === 'asc') ? 'ASC' : 'DESC';
+  const order = (req.query.order && req.query.order.toLowerCase() === 'asc') ? 'asc' : 'desc';
 
   try {
-    const conn = await pool.getConnection();
-    try {
-      const [rows] = await conn.query('SELECT shape, type, COUNT(*) as cnt, AVG(result) as avg_result, MIN(result) as min_result, MAX(result) as max_result FROM calculations GROUP BY shape, type');
-      // total perhitungan per bentuk
-      const [totals] = await conn.query('SELECT COUNT(*) as total FROM calculations');
-      // 20 catatan terakhir dengan pengurutan yang diminta
-      const orderBy = allowedSort[sort];
-      const q = `SELECT * FROM calculations ORDER BY ${orderBy} ${order} LIMIT 20`;
-      const [last] = await conn.query(q);
+    // Statistik per bentuk
+    const { data: stats, error: statsError } = await supabase
+      .from('calculations')
+      .select('shape, type, cnt: count(*), avg_result: avg(result), min_result: min(result), max_result: max(result)')
+      .group('shape, type');
+    if (statsError) throw statsError;
 
-      // Mengelompokkan statistik berdasarkan kategori bentuk
-      // Bangun Datar: persegi, segitiga, lingkaran
-      // Bangun Ruang: kubus, limas, tabung
-      // Hitung total per kategori untuk persentase
-      const flatShapes = ['persegi','segitiga','lingkaran'];
-      const spaceShapes = ['kubus','limas','tabung'];
-      const counts = {};
-      rows.forEach(r => { counts[r.shape] = r.cnt; });
+    // Total perhitungan
+    const { count: totalCount, error: countError } = await supabase
+      .from('calculations')
+      .select('*', { count: 'exact', head: true });
+    if (countError) throw countError;
 
-      const flatTotal = flatShapes.reduce((s, sh) => s + (counts[sh] || 0), 0);
-      const spaceTotal = spaceShapes.reduce((s, sh) => s + (counts[sh] || 0), 0);
+    // 20 catatan terakhir dengan pengurutan yang diminta
+    const { data: last, error: lastError } = await supabase
+      .from('calculations')
+      .select('*')
+      .order(sort, { ascending: order === 'asc' })
+      .limit(20);
+    if (lastError) throw lastError;
 
-      const categoryStats = {
-        flat: flatShapes.map(sh => ({ shape: sh, count: counts[sh] || 0, percent: flatTotal ? +( (counts[sh]||0) / flatTotal * 100 ).toFixed(1) : 0 })),
-        space: spaceShapes.map(sh => ({ shape: sh, count: counts[sh] || 0, percent: spaceTotal ? +( (counts[sh]||0) / spaceTotal * 100 ).toFixed(1) : 0 }))
-      };
+    // Mengelompokkan statistik berdasarkan kategori bentuk
+    // Bangun Datar: persegi, segitiga, lingkaran
+    // Bangun Ruang: kubus, limas, tabung
+    // Hitung total per kategori untuk persentase
+    const flatShapes = ['persegi','segitiga','lingkaran'];
+    const spaceShapes = ['kubus','limas','tabung'];
+    const counts = {};
+    stats.forEach(r => { counts[r.shape] = r.cnt; });
 
-      res.render('dashboard', { stats: rows, totals: totals[0].total, last, sort, order: order.toLowerCase(), categoryStats });
-    } finally {
-      conn.release();
-    }
+    const flatTotal = flatShapes.reduce((s, sh) => s + (counts[sh] || 0), 0);
+    const spaceTotal = spaceShapes.reduce((s, sh) => s + (counts[sh] || 0), 0);
+
+    const categoryStats = {
+      flat: flatShapes.map(sh => ({ shape: sh, count: counts[sh] || 0, percent: flatTotal ? +( (counts[sh]||0) / flatTotal * 100 ).toFixed(1) : 0 })),
+      space: spaceShapes.map(sh => ({ shape: sh, count: counts[sh] || 0, percent: spaceTotal ? +( (counts[sh]||0) / spaceTotal * 100 ).toFixed(1) : 0 }))
+    };
+
+    res.render('dashboard', { stats, totals: totalCount, last, sort, order, categoryStats });
   } catch (e) {
-    console.error('DB read failed', e.message);
+    console.error('Supabase read failed', e.message);
     res.render('dashboard', { stats: [], totals: 0, last: [], sort: 'timestamp', order: 'desc' });
   }
 });
